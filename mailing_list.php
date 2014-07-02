@@ -18,7 +18,7 @@
 										   self::$dbParams['password'],
 										   self::$dbParams['database']);
 				if(self::$dbConn->connect_errno)
-					throw new Exception("Failed to connect: ".self::$dbConn->connect_errno." - ".self::$dbConn->connect_error);
+					throw new Exception('Failed to connect: '.self::$dbConn->connect_errno.' - '.self::$dbConn->connect_error);
 				register_shutdown_function('MailingList::Close');
 				self::$isInit = true;
 				self::$isClosed = false;
@@ -87,7 +87,7 @@
 			$email = '';
 			$emails = array();
 			$i = 0;
-			$statement = self::$dbConn->prepare("SELECT `email` FROM `mailing_list`");
+			$statement = self::$dbConn->prepare("SELECT `email` FROM `mailing_list` ORDER BY `id`");
 			$statement->execute();
 			$statement->bind_result($email);
 			while($statement->fetch())
@@ -97,6 +97,18 @@
 			}
 			$statement->close();
 			return $emails;
+		}
+		public static function GetEmail($firstName,$lastName)
+		{
+			self::Initialize();
+			$statement = self::$dbConn->prepare('SELECT `email` FROM `mailing_list` WHERE firstName=? AND lastName=? LIMIT 1');
+			$statement->bind_param('ss',$firstName,$lastName);
+			$statement->execute();
+			$email = '';
+			$statement->bind_result($email);
+			$statement->fetch();
+			$statement->close();
+			return $email;
 		}
 		public static function Unsubscribe($email)
 		{
@@ -108,4 +120,4 @@
 			$statement->close();
 		}
 	}
-	
+?>
