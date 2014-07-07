@@ -7,8 +7,9 @@
 	*/
 	abstract class EmailSender
 	{
-		abstract function Send($info)
-		{
-		}
+		abstract function Setup($args);
+		abstract function Send($info);
+		abstract function SendMass($info, $receipments);
+		abstract function Close();
 	}
 ?>
